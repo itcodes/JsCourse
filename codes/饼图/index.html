@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <style>
+  .pie,
+  .pie::before {
+    --bg-color: #37c;
+    --fg-color: #3c7;
+    display: inline-block;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+  }
+  .pie {
+    position: relative;
+    text-align: center;
+    line-height: 150px;
+    background: linear-gradient(90deg, var(--bg-color) 50%, transparent 0);
+    color: #fff;
+    animation: spin-convex 2s linear infinite;
+    animation-play-state: paused;
+    animation-delay: -0s;
+  }
+  .pie::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(90deg, var(--fg-color) 50%, var(--bg-color) 0);
+    z-index: -1;
+    animation: spin 1s linear infinite;
+    animation-play-state: paused;
+    animation-delay: inherit;
+  }
+  @keyframes spin{
+    to {transform: rotate(1turn)}
+  }
+  @keyframes spin-convex{
+    50% {background: linear-gradient(90deg, transparent 50%, var(--fg-color) 0);}
+  }
+  </style>
+</head>
+<body>
+  <div class="pie" style="animation-delay: -0.25s;">25%</div>
+  <div class="pie" style="animation-delay: -0.3s;">30%</div>
+  <div class="pie" style="animation-delay: -0.65s;">65%</div>
+  <div class="pie" style="animation-delay: -0.85s;">85%</div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>抽象行为</title>
+  <style>
+    #list {
+      list-style-type: none;
+      justify-content: flex-start;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #list li {
+      padding: 10px;
+      margin: 0;
+    }
+    #list img {
+      height: 200px;
+      cursor: pointer;
+      box-sizing: border-box;
+      padding: 5px;
+    }
+
+    #list img.selected {
+      border: solid 5px #37c;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <ul id="list">
+    <li>
+      <img src="https://p4.ssl.qhimg.com/t01713d89cfdb45cdf5.jpg">
+    </li>
+    <li>
+      <img src="https://p4.ssl.qhimg.com/t01e456146c8f8a639a.jpg">
+    </li>
+    <li>
+      <img src="https://p1.ssl.qhimg.com/t015f613e2205b573d8.jpg">
+    </li>
+    <li>
+      <img src="https://p0.ssl.qhimg.com/t01290338a28018d404.jpg">
+    </li>
+    <li>
+      <img src="https://p3.ssl.qhimg.com/t01d9aa5ae469c8862e.jpg">
+    </li>
+    <li>
+      <img src="https://p3.ssl.qhimg.com/t01cb20d35fc4aa3c0d.jpg">
+    </li>
+    <li>
+      <img src="https://p5.ssl.qhimg.com/t0110b30256941b9611.jpg">
+    </li>
+  </ul>
+  <script>
+  function useBehavior(context) {
+    const {type, getDetail} = context;
+    return function(subject, target) {
+      const event = new CustomEvent(type, {bubbles: true, detail: getDetail.call(context, subject, target)});
+      target.dispatchEvent(event);
+    }
+  }
+
+  const preview = useBehavior({
+    type: 'preview',
+    getDetail(subject, target) {
+      const imgs = Array.from(subject.querySelectorAll('img'));
+      const selected = imgs.indexOf(target);
+      let mask = document.getElementById('mask');
+
+      if(!mask) {
+        mask = document.createElement('div');
+        mask.id = "mask";
+        mask.innerHTML = `
+          <a class="previous" href="###">&lt;</a>
+          <img src="${imgs[selected].src}">
+          <a class="next" href="###">&gt;</a>    
+        `
+        Object.assign(mask.style, {
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'none',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        });
+        mask.querySelectorAll('a').forEach((a) => {
+          Object.assign(a.style, {
+            width: '30px',
+            textAlign: 'center',
+            fontSize: '2rem',
+            color: '#fff',
+            textDecoration: 'none',
+          });
+        });
+        document.body.appendChild(mask);
+        let idx = selected;
+        mask.addEventListener('click', (evt) => {
+          const target = evt.target;
+          if(target === mask) {
+            mask.style.display = 'none';
+          } else if(target.className === 'previous') {
+            updateButton(--idx);
+          } else if(target.className === 'next') {
+            updateButton(++idx);
+          }
+        });
+      }
+
+      function updateButton(idx) {
+        const [previous, next] = [...mask.querySelectorAll('a')];
+        previous.style.visibility = idx ? 'visible' : 'hidden';
+        next.style.visibility = idx < imgs.length - 1 ? 'visible' : 'hidden';
+        const img = mask.querySelector('img');
+        img.src = imgs[idx].src;
+      }
+
+      return {
+        showMask(){
+          mask.style.display = 'flex';
+          updateButton(selected);
+        },
+      };
+    },
+  });
+
+  const select = useBehavior({
+    type: 'select',
+    data: {
+      picked: new Set(),
+    },
+    getDetail(subject, target) {
+      const picked = this.data.picked;
+      if(picked.has(target)) {
+        target.className = '';
+        picked.delete(target);
+      } else {
+        target.className = 'selected';
+        picked.add(target);
+      }
+
+      return {
+        changed: target,
+        picked,
+      };
+    },
+  });
+
+  const list = document.getElementById('list');
+  list.addEventListener('click', (evt) => {
+    const target = evt.target;
+    if(target.tagName === 'IMG') {
+      if(evt.altKey) {
+        select(list, target);
+      } else {
+        preview(list, target);
+      }
+    }
+  });
+
+  list.addEventListener('preview', ({detail}) => {
+    const {showMask} = detail;
+    showMask();
+  });
+  </script>
+</body>
+</html>

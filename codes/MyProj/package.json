@@ -1,0 +1,39 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "lint:init": "eslint --init",
+    "lint": "eslint './**/*.js'",
+    "lint:fix": "eslint './**/*.js' --fix",
+    "compile": "rm -rf lib/* && babel src -d lib",
+    "dev": "webpack-dev-server --env.server=example",
+    "build": "webpack --env.mode=none",
+    "build:dev": "webpack --env.mode=development",
+    "build:prod": "webpack --env.mode=production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3",
+    "babel-loader": "^8.0.6"
+  },
+  "dependencies": {
+    "core-js": "^3.6.4"
+  }
+}

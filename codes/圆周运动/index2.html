@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  .main {
+    width: 512px;
+    height: 512px;
+    position: relative;
+  }
+  #sun, #earth {
+    position: absolute;
+  }
+  #sun {
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    left: 50%;
+    top: 50%;
+  }
+  #earth {
+    left: 50%;
+    top: calc(50% - 128px);
+    transform: translate(-50%, -50%) rotate(.0turn);
+    transform-origin: 50% calc(50% + 128px);
+    font-size: 2rem;
+    //animation: rotate 5s linear infinite;
+  }
+
+  @keyframes rotate {
+    to {transform: translate(-50%, -50%) rotate(1turn)}
+  }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div id="sun">🌞</div>
+    <div id="earth">🌏</div>
+  </div>
+  <script>
+    const earth = document.getElementById('earth');
+    const T = 5000; // 5秒
+
+    function update(t) {
+      earth.style.transform = `translate(-50%, -50%) rotate3d(0, 0, 1, ${t / T}turn)`;
+      requestAnimationFrame(update);
+    }
+    update(0);
+  </script>
+</body>
+</html>

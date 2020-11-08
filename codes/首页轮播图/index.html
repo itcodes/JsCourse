@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>首页轮播图</title>
+  <style>
+    .slider {
+      position: relative;
+      width: 790px;
+      height: 340px;
+    }
+
+    .slider ul {
+      list-style-type:none;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    .slider__item,
+    .slider__item--selected {
+      position: absolute;
+      transition: opacity 1s;
+      opacity: 0;
+      text-align: center;
+    }
+
+    .slider__item--selected {
+      transition: opacity 1s;
+      opacity: 1;
+    }  
+  </style>
+</head>
+<body>
+  <div class="slider">
+    <ul>
+      <li class="slider__item--selected">
+        <img src="https://p5.ssl.qhimg.com/t0119c74624763dd070.png"/>
+      </li>
+      <li class="slider__item">
+        <img src="https://p4.ssl.qhimg.com/t01adbe3351db853eb3.jpg"/>
+      </li>
+      <li class="slider__item">
+        <img src="https://p2.ssl.qhimg.com/t01645cd5ba0c3b60cb.jpg"/>
+      </li>
+      <li class="slider__item">
+        <img src="https://p4.ssl.qhimg.com/t01331ac159b58f5478.jpg"/>
+      </li>
+    </ul>
+  </div>
+  <script>
+    class Slider {
+      constructor({container}) {
+        this.container = container;
+        this.items = Array.from(container.querySelectorAll('.slider__item, .slider__item--selected'));
+      }
+      getSelectedItem(){
+        const selected = this.container.querySelector('.slider__item--selected');
+        return selected
+      }
+      getSelectedItemIndex(){
+        return this.items.indexOf(this.getSelectedItem());
+      }
+      slideTo(idx){
+        const selected = this.getSelectedItem();
+        if(selected){ 
+          selected.className = 'slider__item';
+        }
+        const item = this.items[idx];
+        if(item){
+          item.className = 'slider__item--selected';
+        }
+      }
+      slideNext(){
+        const currentIdx = this.getSelectedItemIndex();
+        const nextIdx = (currentIdx + 1) % this.items.length;
+        this.slideTo(nextIdx);
+      }
+      slidePrevious(){
+        const currentIdx = this.getSelectedItemIndex();
+        const previousIdx = (this.items.length + currentIdx - 1) % this.items.length;
+        this.slideTo(previousIdx);  
+      }
+    }
+    const container = document.querySelector('.slider');
+    const slider = new Slider({container});
+    setInterval(() => {
+      slider.slideNext();
+    }, 3000);
+  </script>
+</body>
+</html>

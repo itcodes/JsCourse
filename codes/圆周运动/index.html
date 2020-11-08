@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .main {
+      width: 512px;
+      height: 512px;
+      position: relative;
+    }
+    #sun, #earth {
+      position: absolute;
+      transform: translate(-50%, -50%);
+    }
+    #sun {
+      font-size: 5rem;
+      left: 50%;
+      top: 50%;
+    }
+    #earth {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div id="sun">🌞</div>
+    <div id="earth">🌏</div>
+  </div>
+  <script>
+    const earth = document.getElementById('earth');
+    const x0 = 256;
+    const y0 = 256;
+    const radius = 128;
+    const T = 5000; // 5秒
+
+    function update(t) {
+      const alpha = 2 * Math.PI * t / T;
+      const x = x0 + radius * Math.cos(alpha);
+      const y = y0 + radius * Math.sin(alpha);
+      earth.style.left = `${x}px`;
+      earth.style.top = `${y}px`;
+      requestAnimationFrame(update);
+    }
+    update(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>动画序列</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    .stage {
+      display: inline-block;
+      position: relative;
+      width: 500px;
+      height: 500px;
+    }
+    #target {
+      display: inline-block;
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left: 50%;
+      top: 50%;
+      background: #73c;
+      transform-origin: 50% 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div id="target"></div>
+  </div>
+  <script>
+    const target = document.getElementById('target');
+    let rotate = 45;
+    requestAnimationFrame(function update() {
+      rotate += 1;
+      target.style.transform = `translate(-50%, -50%) rotate(${rotate}deg)`;
+      requestAnimationFrame(update);
+    });
+  </script>
+</body>
+</html>

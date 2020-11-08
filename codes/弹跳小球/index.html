@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    #sphere {
+      position: absolute;
+      left: 100px;
+      top: 100px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #0af;
+    }
+
+    #ground {
+      position: absolute;
+      top: 420px;
+      width: 600px;
+      height: 10px;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+  <div id="sphere"></div>
+  <div id="ground"></div>
+  <script>
+    function animate(target, duration, progress) {
+      const startTime = Date.now();
+      return new Promise((resolve) => {
+        function update() {
+          const t = Date.now() - startTime;
+          const p = Math.min(t / duration, 1);
+          progress(target, p);
+          if(p < 1) {
+            requestAnimationFrame(update);
+          } else {
+            resolve(p);
+          }
+        }
+        update();
+      });
+    }
+
+    const sphere = document.getElementById('sphere');
+
+    (async function() {
+      let height = 400;
+      let duration = 1000;
+      //noprotect
+      while(1) {
+        await animate(sphere, duration, (target, p) => {
+          const top = (400 - height) + height * p ** 2;
+          target.style.top = `${top}px`;
+        });
+        height *= 0.7;
+        duration *= Math.sqrt(0.7);
+        await animate(sphere, duration, (target, p) => {
+          // 起点是400，反向运动，所以要用400减
+          const top = 400 - height * p * (2 - p);
+          target.style.top = `${top}px`;
+        });
+      }
+    }());  
+  </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>首页轮播图</title>
+  <style>
+    .slider {
+      position: relative;
+      width: 790px;
+      height: 340px;
+    }
+
+    .slider ul {
+      list-style-type:none;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    .slider__item,
+    .slider__item--selected {
+      position: absolute;
+      transition: opacity 1s;
+      opacity: 0;
+      text-align: center;
+    }
+
+    .slider__item--selected {
+      transition: opacity 1s;
+      opacity: 1;
+    }
+
+    .slider__next,
+    .slider__previous{
+      display: inline-block;
+      position: absolute;
+      top: 50%;
+      margin-top: -25px;
+      width: 30px;
+      height:50px;
+      text-align: center;
+      font-size: 24px;
+      line-height: 50px;
+      overflow: hidden;
+      border: none;
+      background: transparent;
+      color: white;
+      background: rgba(0,0,0,0.2);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity .5s;
+    }
+
+    .slider__previous {
+      left: 0;
+    }
+
+    .slider__next {
+      right: 0;
+    }
+
+    .slider:hover .slider__previous {
+      opacity: 1;
+    }
+
+
+    .slider:hover .slider__next {
+      opacity: 1;
+    }
+
+    .slider__previous:after {
+      content: '<';
+    }
+
+    .slider__next:after {
+      content: '>';
+    }
+
+    .slider__control{
+      position: relative;
+      display: table;
+      background-color: rgba(255, 255, 255, 0.5);
+      padding: 5px;
+      border-radius: 12px;
+      bottom: 30px;
+      margin: auto;
+    }
+
+    .slider__control-buttons,
+    .slider__control-buttons--selected{
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin: 0 5px;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .slider__control-buttons--selected {
+      background-color: red;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="slider">
+    <ul>
+      <li class="slider__item--selected">
+        <img src="https://p5.ssl.qhimg.com/t0119c74624763dd070.png"/>
+      </li>
+      <li class="slider__item">
+        <img src="https://p4.ssl.qhimg.com/t01adbe3351db853eb3.jpg"/>
+      </li>
+      <li class="slider__item">
+        <img src="https://p2.ssl.qhimg.com/t01645cd5ba0c3b60cb.jpg"/>
+      </li>
+      <li class="slider__item">
+        <img src="https://p4.ssl.qhimg.com/t01331ac159b58f5478.jpg"/>
+      </li>
+    </ul>
+    <a class="slider__next"></a>
+    <a class="slider__previous"></a>
+    <div class="slider__control">
+      <span class="slider__control-buttons--selected"></span>
+      <span class="slider__control-buttons"></span>
+      <span class="slider__control-buttons"></span>
+      <span class="slider__control-buttons"></span>
+    </div>
+  </div>
+  <script>
+    class Slider {
+      constructor({container, cycle = 3000} = {}) {
+        this.container = container;
+        this.items = Array.from(container.querySelectorAll('.slider__item, .slider__item--selected'));
+        this.cycle = cycle;
+
+        const controller = this.container.querySelector('.slider__control');
+        const buttons = Array.from(controller.querySelectorAll('.slider__control-buttons, .slider__control-buttons--selected'));
+
+        controller.addEventListener('mouseover', evt=>{
+          const idx = buttons.indexOf(evt.target);
+          if(idx >= 0){
+            this.slideTo(idx);
+            this.stop();
+          }
+        });
+        
+        controller.addEventListener('mouseout', evt=>{
+          this.start();
+        });
+        
+        this.container.addEventListener('slide', evt => {
+          const idx = evt.detail.index
+          const selected = controller.querySelector('.slider__control-buttons--selected');
+          if(selected) selected.className = 'slider__control-buttons';
+          buttons[idx].className = 'slider__control-buttons--selected';
+        });
+
+        const previous = this.container.querySelector('.slider__previous');
+        previous.addEventListener('click', evt => {
+          this.stop();
+          this.slidePrevious();
+          this.start();
+          evt.preventDefault();
+        });
+
+        const next = this.container.querySelector('.slider__next');
+        next.addEventListener('click', evt => {
+          this.stop();
+          this.slideNext();
+          this.start();
+          evt.preventDefault();
+        });
+      }
+      getSelectedItem(){
+        const selected = this.container.querySelector('.slider__item--selected');
+        return selected
+      }
+      getSelectedItemIndex(){
+        return this.items.indexOf(this.getSelectedItem());
+      }
+      slideTo(idx){
+        const selected = this.getSelectedItem();
+        if(selected){ 
+          selected.className = 'slider__item';
+        }
+        const item = this.items[idx];
+        if(item){
+          item.className = 'slider__item--selected';
+        }
+
+        const detail = {index: idx};
+        const event = new CustomEvent('slide', {bubbles:true, detail});
+        this.container.dispatchEvent(event);
+      }
+      slideNext(){
+        const currentIdx = this.getSelectedItemIndex();
+        const nextIdx = (currentIdx + 1) % this.items.length;
+        this.slideTo(nextIdx);
+      }
+      slidePrevious(){
+        const currentIdx = this.getSelectedItemIndex();
+        const previousIdx = (this.items.length + currentIdx - 1) % this.items.length;
+        this.slideTo(previousIdx);  
+      }
+      start(){
+        this.stop();
+        this._timer = setInterval(()=>this.slideNext(), this.cycle);
+      }
+      stop(){
+        clearInterval(this._timer);
+      }
+    }
+
+    const container = document.querySelector('.slider');
+    const slider = new Slider({container});
+    slider.start();
+  </script>
+</body>
+</html>
